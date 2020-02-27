@@ -1,0 +1,196 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Quick Call Button\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-28 19:11+0000\n"
+"PO-Revision-Date: 2019-03-28 19:42+0000\n"
+"Last-Translator: caonguyen <caohat@gmail.com>\n"
+"Language-Team: Tiếng Việt\n"
+"Language: vi\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.1; wp-5.1.1"
+
+#: quick-call-button.php:200
+msgid " Disabled Shake Effect"
+msgstr "Hiệu ứng lắc bị vô hiệu hóa"
+
+#: quick-call-button.php:198
+msgid " Disabled Wave Effect"
+msgstr "Hiệu ứng sóng bị vô hiệu hóa"
+
+#: quick-call-button.php:236
+msgid ""
+" If you find the plugin useful. Donate – Buy me a coffee!  Thank you very "
+"much."
+msgstr ""
+"Nếu bạn tìm thấy các plugin hữu ích. Quyên góp - Mua cho tôi một ly cà phê! "
+"Cảm ơn nhiều."
+
+#: quick-call-button.php:145
+msgid " Position On The Left"
+msgstr "Vị trí bên trái"
+
+#: quick-call-button.php:138
+msgid " Position On The Top"
+msgstr "Vị trí bên trên"
+
+#. Description of the plugin
+msgid ""
+"add quick call button, call now button for any wordpress website on ipad and "
+"mobile phone."
+msgstr ""
+
+#: quick-call-button.php:150
+msgid ""
+"Adding a phone number for a quick call button will appear on your website."
+msgstr ""
+"Thêm số điện thoại cho nút gọi nhanh sẽ xuất hiện trên trang web của bạn."
+
+#: quick-call-button.php:160
+msgid "Adding a text for a quick call button will appear on your website."
+msgstr "Thêm văn bản cho nút gọi nhanh sẽ xuất hiện trên trang web của bạn."
+
+#: quick-call-button.php:181
+msgid "Bar Background"
+msgstr ""
+
+#: quick-call-button.php:188
+msgid "Button Color"
+msgstr "Màu Nút"
+
+#: quick-call-button.php:195
+msgid "Button Effect"
+msgstr "Hiệu Ứng Nút"
+
+#: quick-call-button.php:317
+msgid "Call Now"
+msgstr "Gọi Ngay"
+
+#: quick-call-button.php:120
+msgid ""
+"Change the appearance of the quick call button display on the screen.The "
+"default is 860px."
+msgstr ""
+"Thay đổi giao diện của màn hình nút gọi nhanh trên màn hình. Mặc định là "
+"860px."
+
+#: quick-call-button.php:215
+msgid "Click Tracking"
+msgstr "Theo dõi nhấp."
+
+#: quick-call-button.php:219
+msgid ""
+"Click tracking turned on? Wait for about a day then log into your Google "
+"Analytics accunt and click in the <strong>Behavior</strong> section on "
+"<strong>Events</strong>."
+msgstr ""
+"Nhấp theo dõi bật? Đợi khoảng một ngày sau đó đăng nhập vào tài khoản Google "
+"Analytics của bạn và nhấp vào phần Hành vi trên Sự kiện"
+
+#: quick-call-button.php:169
+msgid "Disabled Text On Desktop"
+msgstr "Tắt Text trên Desktop"
+
+#: quick-call-button.php:167
+msgid "Disabled Text On Tablet"
+msgstr "Tắt Text trên Tablet"
+
+#: quick-call-button.php:123
+msgid "Display On Screen"
+msgstr "Hiển Thị Trên Màn Hình"
+
+#: quick-call-button.php:127
+msgid "Display on the screen is smaller than the number you install."
+msgstr "Hiển thị trên màn hình nhỏ hơn số bạn cài đặt"
+
+#: quick-call-button.php:218
+msgid "Google Universal Analytics (analytics.js)"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://longvietweb.com/"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://longvietweb.com/plugins/"
+msgstr ""
+
+#: quick-call-button.php:118
+msgid "if you guys like it."
+msgstr "nếu các bạn thích nó"
+
+#: quick-call-button.php:142
+msgid "Left"
+msgstr "Trái"
+
+#. Author of the plugin
+msgid "LongViet"
+msgstr ""
+
+#: quick-call-button.php:153
+msgid "Phone Number"
+msgstr "Số Điện Thoại"
+
+#. Name of the plugin
+msgid "Quick Call Button"
+msgstr "Nút Gọi Nhanh"
+
+#: quick-call-button.php:132
+msgid "Quick Call Button Position . Default Top is 50% & Left is 3% ."
+msgstr ""
+"Nút gọi nhanh vị trí. Mặc định cách phía trên màn hình là 50% , Bên trái là "
+"3%."
+
+#: quick-call-button.php:118
+msgid ""
+"Rate <a href=\"https://wordpress.org/support/plugin/quick-call-"
+"button/reviews/?filter=5\" target=\"_blank\"> 5 Stars </a>"
+msgstr ""
+"Đánh Gía <a href=\"https://wordpress.org/support/plugin/quick-call-"
+"button/reviews/?filter=5\" target=\"_blank\"> 5 Sao </a>"
+
+#: quick-call-button.php:226
+msgid "Save Changes"
+msgstr "Lưu Cài Đặt"
+
+#: quick-call-button.php:205
+msgid "Select Images Button"
+msgstr "Chọn Hình ảnh Nút"
+
+#: quick-call-button.php:208
+msgid "Select Style Images 1"
+msgstr "Lựa chọn hình ảnh phong cách 1"
+
+#: quick-call-button.php:209
+msgid "Select Style Images 2"
+msgstr "Lựa chọn hình ảnh phong cách 2"
+
+#: quick-call-button.php:109
+msgid "Settings Quick Call Button"
+msgstr "Cài Đặt Nút Gọi Nhanh"
+
+#: quick-call-button.php:163
+msgid "Text"
+msgstr "Văn Bản"
+
+#: quick-call-button.php:174
+msgid "Text Color"
+msgstr "Màu Văn Bản"
+
+#: quick-call-button.php:135
+msgid "Top"
+msgstr "Trên"
+
+#: quick-call-button.php:220
+msgid ""
+"Your website page needs to integrate Google Analytics (<a href=\"https:"
+"//support.google.com/analytics/answer/1033068#SeeAlerts\" target=\"_blank\"> "
+"Learn more here</a>)"
+msgstr ""
+"Trang web của bạn cần tích hợp Google Analytics (<a href=\"https://support."
+"google.com/analytics/answer/1033068#SeeAlerts\" target=\"_blank\"> Tim hiểu "
+"thêm ở đây </a>)"

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "citigo/kiotviet-php-sdk": "1.0.*"
+    }
+}

@@ -1,0 +1,183 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Quick Call Button\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-28 19:11+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.1; wp-5.1.1"
+
+#: quick-call-button.php:200
+msgid " Disabled Shake Effect"
+msgstr ""
+
+#: quick-call-button.php:198
+msgid " Disabled Wave Effect"
+msgstr ""
+
+#: quick-call-button.php:236
+msgid ""
+" If you find the plugin useful. Donate – Buy me a coffee!  Thank you very "
+"much."
+msgstr ""
+
+#: quick-call-button.php:145
+msgid " Position On The Left"
+msgstr ""
+
+#: quick-call-button.php:138
+msgid " Position On The Top"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"add quick call button, call now button for any wordpress website on ipad and "
+"mobile phone."
+msgstr ""
+
+#: quick-call-button.php:150
+msgid ""
+"Adding a phone number for a quick call button will appear on your website."
+msgstr ""
+
+#: quick-call-button.php:160
+msgid "Adding a text for a quick call button will appear on your website."
+msgstr ""
+
+#: quick-call-button.php:181
+msgid "Bar Background"
+msgstr ""
+
+#: quick-call-button.php:188
+msgid "Button Color"
+msgstr ""
+
+#: quick-call-button.php:195
+msgid "Button Effect"
+msgstr ""
+
+#: quick-call-button.php:317
+msgid "Call Now"
+msgstr ""
+
+#: quick-call-button.php:120
+msgid ""
+"Change the appearance of the quick call button display on the screen.The "
+"default is 860px."
+msgstr ""
+
+#: quick-call-button.php:215
+msgid "Click Tracking"
+msgstr ""
+
+#: quick-call-button.php:219
+msgid ""
+"Click tracking turned on? Wait for about a day then log into your Google "
+"Analytics accunt and click in the <strong>Behavior</strong> section on "
+"<strong>Events</strong>."
+msgstr ""
+
+#: quick-call-button.php:169
+msgid "Disabled Text On Desktop"
+msgstr ""
+
+#: quick-call-button.php:167
+msgid "Disabled Text On Tablet"
+msgstr ""
+
+#: quick-call-button.php:123
+msgid "Display On Screen"
+msgstr ""
+
+#: quick-call-button.php:127
+msgid "Display on the screen is smaller than the number you install."
+msgstr ""
+
+#: quick-call-button.php:218
+msgid "Google Universal Analytics (analytics.js)"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://longvietweb.com/"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://longvietweb.com/plugins/"
+msgstr ""
+
+#: quick-call-button.php:118
+msgid "if you guys like it."
+msgstr ""
+
+#: quick-call-button.php:142
+msgid "Left"
+msgstr ""
+
+#. Author of the plugin
+msgid "LongViet"
+msgstr ""
+
+#: quick-call-button.php:153
+msgid "Phone Number"
+msgstr ""
+
+#. Name of the plugin
+msgid "Quick Call Button"
+msgstr ""
+
+#: quick-call-button.php:132
+msgid "Quick Call Button Position . Default Top is 50% & Left is 3% ."
+msgstr ""
+
+#: quick-call-button.php:118
+msgid ""
+"Rate <a href=\"https://wordpress.org/support/plugin/quick-call-"
+"button/reviews/?filter=5\" target=\"_blank\"> 5 Stars </a>"
+msgstr ""
+
+#: quick-call-button.php:226
+msgid "Save Changes"
+msgstr ""
+
+#: quick-call-button.php:205
+msgid "Select Images Button"
+msgstr ""
+
+#: quick-call-button.php:208
+msgid "Select Style Images 1"
+msgstr ""
+
+#: quick-call-button.php:209
+msgid "Select Style Images 2"
+msgstr ""
+
+#: quick-call-button.php:109
+msgid "Settings Quick Call Button"
+msgstr ""
+
+#: quick-call-button.php:163
+msgid "Text"
+msgstr ""
+
+#: quick-call-button.php:174
+msgid "Text Color"
+msgstr ""
+
+#: quick-call-button.php:135
+msgid "Top"
+msgstr ""
+
+#: quick-call-button.php:220
+msgid ""
+"Your website page needs to integrate Google Analytics (<a href=\"https:"
+"//support.google.com/analytics/answer/1033068#SeeAlerts\" target=\"_blank\"> "
+"Learn more here</a>)"
+msgstr ""

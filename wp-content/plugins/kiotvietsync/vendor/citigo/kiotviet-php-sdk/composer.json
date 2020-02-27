@@ -1,0 +1,23 @@
+{
+    "name": "citigo/kiotviet-php-sdk",
+    "description": "This is package for developer work with kiotviet api",
+    "authors": [
+        {
+            "name": "Citigo",
+            "email": "developer@citigo.net"
+        }
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": ">=5.4.0",
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "^6.3@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kiotviet\\": "src/"
+        }
+    }
+}
