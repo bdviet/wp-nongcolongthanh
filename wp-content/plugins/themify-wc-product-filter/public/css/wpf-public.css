@@ -231,21 +231,25 @@
     margin-bottom: 30px;
 }
 .wpf_search_button{
-    background-color: #dcaa2e;
-    border: none;
-    border-radius: 0;
-    color: #fff;
-    cursor: pointer;
-    text-transform: uppercase;
-    padding: 0.8em;
-    -webkit-appearance: none;
-    transition: all .1s linear;
-    outline: none;
+    display: inline-block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    background: #668ad8;/*ボタン色*/
+    color: #fff;/*ボタン色と同じに*/
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.29);
+    border-bottom: solid 3px #956262;
+    border-radius: 3px;/*角の丸み*/
+    font-weight: bold;
+    text-shadow: -1px -1px rgba(255, 255, 255, 0.44), 1px 1px rgba(0, 0, 0, 0.38);
 }
-.wpf_search_button:hover{
-    background-color: #000;
-	color: #fff;
+.wpf_search_button:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);
+    border-bottom: none;
 }
+
 .wpf_reset_btn input[type="reset"]{
     background: none;
     border: none;    

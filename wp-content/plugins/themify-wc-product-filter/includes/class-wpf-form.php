@@ -864,7 +864,7 @@ class WPF_Form {
                         <div class="wpf_price_format">
                             <?php echo WPF_Utils::format_price('0'); ?>
                         </div>
-                        <div data-max="<?php echo ceil($max) ?>" data-min="<?php echo $min ?>"  class="wpf_slider"></div>
+                        <div data-max="<?php echo ceil($max) ?>" data-min="<?php echo $min ?>"  class="wpf_slider" step=10000 ></div>
                         <input type="hidden" name="<?php echo $name ?>-from" value="<?php echo $from ?>" class="wpf_price_from" />
                         <input type="hidden" name="<?php echo $name ?>-to" value="<?php echo $to ?>" class="wpf_price_to" />
                         <?php
