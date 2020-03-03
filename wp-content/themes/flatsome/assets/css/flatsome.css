@@ -4949,7 +4949,7 @@ button.flickity-prev-next-button[disabled] {
     left: 20%;
     right: 20%;
     padding: 0;
-    margin: 0;
+    margin: -50px;
     list-style: none;
     text-align: center;
     line-height: 1
@@ -5085,11 +5085,11 @@ button.flickity-prev-next-button[disabled] {
 }
 
 .slider-nav-light .flickity-page-dots .dot {
-    border-color: #fff
+    /*border-color: #fff*/
 }
 
 .slider-nav-light .flickity-page-dots .dot.is-selected {
-    background-color: #fff
+    /*background-color: #fff*/
 }
 
 .slider-nav-light.slider-nav-dots-simple .flickity-page-dots .dot {
