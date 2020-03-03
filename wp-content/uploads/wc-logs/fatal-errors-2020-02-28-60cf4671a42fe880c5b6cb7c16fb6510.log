@@ -1,0 +1,11 @@
+2020-02-28T19:34:35+00:00 CRITICAL Uncaught Error: Call to a member function get_type() on boolean in /var/www/html/wp-content/plugins/kiotvietsync/includes/public_actions/OrderHookAction.php:168
+Stack trace:
+#0 /var/www/html/wp-includes/class-wp-hook.php(288): OrderHookAction->update_stock_order(4347)
+#1 /var/www/html/wp-includes/class-wp-hook.php(312): WP_Hook->apply_filters('', Array)
+#2 /var/www/html/wp-includes/plugin.php(478): WP_Hook->do_action(Array)
+#3 /var/www/html/wp-content/themes/flatsome/woocommerce/checkout/thankyou.php(47): do_action('woocommerce_tha...', 4347)
+#4 /var/www/html/wp-content/plugins/woocommerce/includes/wc-core-functions.php(249): include('/var/www/html/w...')
+#5 /var/www/html/wp-content/plugins/woocommerce/includes/shortcodes/class-wc-shortcode-checkout.php(256): wc_get_template('checkout/thanky...', Array)
+#6 /var/www/html/wp-content/plugins/woocommerce/includes/shortcodes/class-wc-shortcode-checkout.php(63): WC_Shortcode_Checkout::order_received(4347)
+#7 /var/www/html/wp-content/plugins/woocommerce/includes/cla in /var/www/html/wp-content/plugins/kiotvietsync/includes/public_actions/OrderHookAction.php on line 168
+
