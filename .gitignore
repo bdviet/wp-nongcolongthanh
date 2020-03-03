@@ -1,0 +1,15 @@
+
+# Created by https://www.gitignore.io/api/wordpress
+# Edit at https://www.gitignore.io/?templates=wordpress
+
+### WordPress ###
+# ignore everything in the root except the "wp-content" directory.
+!wp-content/
+
+# ignore log files and databases
+*.log
+*.sql
+*.sqlite
+wp-config.php
+
+# End of https://www.gitignore.io/api/wordpress
