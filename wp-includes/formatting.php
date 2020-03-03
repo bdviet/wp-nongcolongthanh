@@ -587,7 +587,7 @@ function wpautop( $pee, $br = true ) {
 		$pee = str_replace( array( '<br>', '<br/>' ), '<br />', $pee );
 
 		// Replace any new line characters that aren't preceded by a <br /> with a <br />.
-		$pee = preg_replace( '|(?<!<br />)\s*\n|', "<br />\n", $pee );
+		// $pee = preg_replace( '|(?<!<br />)\s*\n|', "<br />\n", $pee );
 
 		// Replace newline placeholders with newlines.
 		$pee = str_replace( '<WPPreserveNewline />', "\n", $pee );
