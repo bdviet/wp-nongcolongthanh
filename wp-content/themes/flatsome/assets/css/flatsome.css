@@ -879,7 +879,7 @@ body.boxed,
 body.boxed header,
 body.boxed .header-wrapper,
 body.boxed .is-sticky-section {
-    max-width: 1170px
+    max-width: 1400px
 }
 
 @media screen and (min-width: 850px) {
