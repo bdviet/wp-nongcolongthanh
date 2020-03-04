@@ -1,6 +1,7 @@
 <?php
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 /**
- * Used to generate a thinkbox inline dialog such as an alert or confirm popup
+ * Used to generate a thick-box inline dialog such as an alert or confirm pop-up
  *
  * Standard: PSR-2
  * @link http://www.php-fig.org/psr/psr-2
@@ -8,14 +9,11 @@
  * @package Duplicator
  * @subpackage classes/ui
  * @copyright (c) 2017, Snapcreek LLC
- * @since 1.1.32
  *
  */
 
 // Exit if accessed directly
-if (!defined('DUPLICATOR_VERSION')) {
-    exit;
-}
+if (! defined('DUPLICATOR_VERSION')) exit;
 
 class DUP_UI_Dialog
 {
@@ -60,6 +58,25 @@ class DUP_UI_Dialog
     public $jscallback;
 
     /**
+     *
+     * @var string
+     */
+    public $okText;
+
+    /**
+     *
+     * @var string
+     */
+    public $cancelText;
+
+    /**
+     * If true close dialog on confirm
+     * @var bool
+     */
+    public $closeOnConfirm = false;
+
+
+    /**
      * The id given to the full dialog
      */
     private $id;
@@ -78,6 +95,8 @@ class DUP_UI_Dialog
         $this->progressText = __('Processing please wait...', 'duplicator');
         $this->uniqid		= substr(uniqid('',true),0,14) . rand();
         $this->id           = 'dup-dlg-'.$this->uniqid;
+        $this->okText       = __('OK', 'duplicator');
+        $this->cancelText   = __('Cancel', 'duplicator');
     }
 
     /**
@@ -107,25 +126,28 @@ class DUP_UI_Dialog
      */
     public function initAlert()
     {
-        $ok = __('OK', 'duplicator');
+        $onClickClose = '';
+        if (!is_null($this->jscallback)) {
+            $onClickClose .= $this->jscallback.';';
+        }
+        $onClickClose .= 'tb_remove();';
 
-        $html = <<<HTML
-		<div id="{$this->id}" style="display:none">
+        $html = '
+		<div id="'.esc_attr($this->id).'" style="display:none">
 			<div class="dup-dlg-alert-txt">
-				{$this->message}
+				'.$this->message.'
 				<br/><br/>
 			</div>
 			<div class="dup-dlg-alert-btns">
-				<input type="button" class="button button-large" value="{$ok}" onclick="tb_remove()" />
+				<input type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="'.$onClickClose.'" />
 			</div>
-		</div>		
-HTML;
+		</div>';
 
         echo $html;
     }
 
     /**
-     * Shows the alert base js code used to display when needed
+     * Shows the alert base JS code used to display when needed
      *
      * @return string	The javascript content used for the alert dialog
      */
@@ -134,61 +156,65 @@ HTML;
         $this->width  = is_numeric($this->width) ? $this->width : 500;
         $this->height = is_numeric($this->height) ? $this->height : 175;
 
-        $html = "tb_show('{$this->title}', '#TB_inline?width={$this->width}&height={$this->height}&inlineId={$this->id}');\n" .
-				 "var styleData = jQuery('#TB_window').attr('style') + 'height: {$this->height}px !important';\n" .
+        $html = "tb_show('".esc_js($this->title)."', '#TB_inline?width=".esc_js($this->width)."&height=".esc_js($this->height)."&inlineId=".esc_js($this->id)."');\n" .
+				 "var styleData = jQuery('#TB_window').attr('style') + 'height: ".esc_js($this->height)."px !important';\n" .
 			 	 "jQuery('#TB_window').attr('style', styleData);";
 
 		echo $html;
     }
 
     /**
-     * Shows the confirm base js code used to display when needed
+     * Shows the confirm base JS code used to display when needed
      *
      * @return string	The javascript content used for the confirm dialog
      */
     public function initConfirm()
     {
-        $ok     = __('OK', 'duplicator');
-        $cancel = __('Cancel', 'duplicator');
-
         $progress_data  = '';
         $progress_func2 = '';
+
+        $onClickConfirm = '';
+        if (!is_null($this->jscallback)) {
+            $onClickConfirm .= $this->jscallback.';';
+        }
 
         //Enable the progress spinner
         if ($this->progressOn) {
             $progress_func1 = "__DUP_UI_Dialog_".$this->uniqid;
             $progress_func2 = ";{$progress_func1}(this)";
-            $progress_data  = <<<HTML
-				<div class='dup-dlg-confirm-progress'><i class='fa fa-circle-o-notch fa-spin fa-lg fa-fw'></i> {$this->progressText}</div>
-				<script> 
-					function {$progress_func1}(obj) 
+            $progress_data  = "<div class='dup-dlg-confirm-progress'><i class='fas fa-circle-notch fa-spin fa-lg fa-fw'></i> ".esc_js($this->progressText)."</div>
+				<script>
+					function {$progress_func1}(obj)
 					{
 						jQuery(obj).parent().parent().find('.dup-dlg-confirm-progress').show();
 						jQuery(obj).closest('.dup-dlg-confirm-btns').find('input').attr('disabled', 'true');
 					}
-				</script>
-HTML;
+				</script>";
+            $onClickConfirm .= $progress_func2.';';
         }
 
-        $html = <<<HTML
-			<div id="{$this->id}" style="display:none">
+        if ($this->closeOnConfirm) {
+             $onClickConfirm .= 'tb_remove();';
+        }
+
+        $html =
+            '<div id="'.esc_attr($this->id).'" style="display:none">
 				<div class="dup-dlg-confirm-txt">
-					<span id="{$this->id}_message">{$this->message}</span>
+					<span id="'.esc_attr($this->id).'_message">'.esc_html($this->message).'</span>
 					<br/><br/>
-					{$progress_data}
+					'.$progress_data.'
 				</div>
 				<div class="dup-dlg-confirm-btns">
-					<input type="button" class="button button-large" value="{$ok}" onclick="{$this->jscallback}{$progress_func2}" />
-					<input type="button" class="button button-large" value="{$cancel}" onclick="tb_remove()" />
+					<input type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="'.$onClickConfirm.'" />
+					<input type="button" class="button button-large" value="'.esc_attr($this->cancelText).'" onclick="tb_remove()" />
 				</div>
-			</div>		
-HTML;
+			</div>';
 
         echo $html;
     }
 
     /**
-     * Shows the confirm base js code used to display when needed
+     * Shows the confirm base JS code used to display when needed
      *
      * @return string	The javascript content used for the confirm dialog
      */
@@ -196,8 +222,8 @@ HTML;
     {
         $this->width  = is_numeric($this->width) ? $this->width : 500;
         $this->height = is_numeric($this->height) ? $this->height : 225;
-                $html = "tb_show('{$this->title}', '#TB_inline?width={$this->width}&height={$this->height}&inlineId={$this->id}');\n" .
-				 "var styleData = jQuery('#TB_window').attr('style') + 'height: {$this->height}px !important';\n" .
+        $html = "tb_show('".esc_js($this->title)."', '#TB_inline?width=".esc_js($this->width)."&height=".esc_js($this->height)."&inlineId=".esc_js($this->id)."');\n" .
+				 "var styleData = jQuery('#TB_window').attr('style') + 'height: ".esc_js($this->height)."px !important';\n" .
 			 	 "jQuery('#TB_window').attr('style', styleData);";
 
 		echo $html;

@@ -107,7 +107,35 @@
                     mouse_over = false;
                     fnHideEvent();
                 })
-                .click(function () {
+                .click(function (e) {
+                    if(data.button_action === "url") {
+                        return true;
+                    } else if(data.button_action === "element") {
+                        e.preventDefault();
+                        
+                        var element = $(data.button_action_element_selector).first();
+                        var container = $(data.button_action_container_selector);
+                        
+                        var offset = element.offset();
+                        if(offset == null)
+                            return false;
+                        
+                        var contOffset = container.last().offset();
+                        if(contOffset == null)
+                            return false;
+                        
+                        data.button_action_element_offset = parseInt(data.button_action_element_offset);
+                        if(isNaN(data.button_action_element_offset))
+                            data.button_action_element_offset = 0;
+                        
+                        var top = offset.top - contOffset.top - data.button_action_element_offset;
+                            
+                        container.animate({scrollTop: top}, data.scroll_duration);
+                        
+                        return false;
+                    }
+                    
+                    e.preventDefault();
                     $("html, body").animate({scrollTop: 0}, data.scroll_duration);
                     return false;
                 });

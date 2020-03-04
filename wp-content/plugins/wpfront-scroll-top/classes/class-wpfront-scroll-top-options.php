@@ -57,6 +57,12 @@ class WPFront_Scroll_Top_Options extends WPFront_Options_Base_ST {
         $this->addOption('hide_wpadmin', 'bit', FALSE)->label(__('Hide on WP-ADMIN', 'wpfront-scroll-top'));
         $this->addOption('hide_iframe', 'bit', FALSE)->label(__('Hide on iframes', 'wpfront-scroll-top'));
 
+        $this->addOption('button_action', 'string', 'top', array($this, 'validate_button_action'))->label(__('Button Action', 'wpfront-scroll-top'));
+        $this->addOption('button_action_page_url', 'string', '')->label(__('Page URL', 'wpfront-scroll-top'));
+        $this->addOption('button_action_element_selector', 'string', '')->label(__('Element CSS Selector', 'wpfront-scroll-top'));
+        $this->addOption('button_action_container_selector', 'string', 'html, body', array($this, 'button_action_container_selector'))->label(__('Scroll Container CSS Selector', 'wpfront-scroll-top'));
+        $this->addOption('button_action_element_offset', 'int', 0)->label(__('Offset', 'wpfront-scroll-top'));
+        
         $this->addOption('location', 'int', 1, array($this, 'validate_range_1_4'))->label(__('Location', 'wpfront-scroll-top'));
         $this->addOption('marginX', 'int', 20)->label(__('Margin X', 'wpfront-scroll-top'));
         $this->addOption('marginY', 'int', 20)->label(__('Margin Y', 'wpfront-scroll-top'));
@@ -147,6 +153,13 @@ class WPFront_Scroll_Top_Options extends WPFront_Options_Base_ST {
 
         return 'image';
     }
+    
+    protected function validate_button_action($arg) {
+        if ($arg == 'element' || $arg == 'url')
+            return $arg;
+
+        return 'top';
+    }
 
     protected function validate_color($arg) {
         if (strlen($arg) != 7)
@@ -168,6 +181,13 @@ class WPFront_Scroll_Top_Options extends WPFront_Options_Base_ST {
         }
 
         return $arg;
+    }
+    
+    protected function button_action_container_selector($args) {
+        if(trim($args) === "")
+            return "html, body";
+        
+        return $args;
     }
 
 }

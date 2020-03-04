@@ -183,6 +183,48 @@ namespace WPFront\Scroll_Top;
             </div>
         </td>
     </tr>
+    <tr>
+        <th scope="row">
+            <?php echo $this->options->button_action_label(); ?>
+        </th>
+        <td>
+            <div class="button-action-container">
+                <label><input type="radio" class="button-action" name="<?php echo $this->options->button_action_name(); ?>" value="top" <?php echo $this->options->button_action() == 'top' ? 'checked' : ''; ?> /> <?php echo __('Scroll to Top', 'wpfront-scroll-top'); ?></label> <span class="description"><?php echo __('[Default action on WP-ADMIN pages.]', 'wpfront-scroll-top'); ?></span>
+                <br />
+                <label><input type="radio" class="button-action" name="<?php echo $this->options->button_action_name(); ?>" value="element" <?php echo $this->options->button_action() == 'element' ? 'checked' : ''; ?> /> <?php echo __('Scroll to Element', 'wpfront-scroll-top'); ?></label>
+                <div class="fields-container element hidden">
+                    <div>
+                        <span><input class="alignment-holder" type="radio"/></span>
+                        <span class="sub-label"><?php echo $this->options->button_action_element_selector_label() . ':&nbsp;'; ?></span>
+                        <span><input name="<?php echo $this->options->button_action_element_selector_name(); ?>" value="<?php echo $this->options->button_action_element_selector(); ?>" /> <span class="description"><?php echo __('[CSS selector of the element, you are trying to scroll to. Ex: #myDivID, .myDivClass]', 'wpfront-scroll-top'); ?></span></span> 
+                    </div>
+                    <div>
+                        <span><input class="alignment-holder" type="radio"/></span>
+                        <span class="sub-label"><?php echo $this->options->button_action_container_selector_label() . ':&nbsp;'; ?></span>
+                        <span><input name="<?php echo $this->options->button_action_container_selector_name(); ?>" value="<?php echo $this->options->button_action_container_selector(); ?>" /> <span class="description"><?php echo __('[CSS selector of the element, which has the scroll bar. "html, body" works in almost all cases.]', 'wpfront-scroll-top'); ?></span></span>
+                    </div>
+                    <div>
+                        <span><input class="alignment-holder" type="radio"/></span>
+                        <span class="sub-label"><?php echo $this->options->button_action_element_offset_label() . ':&nbsp;'; ?></span>
+                        <span><input class="pixels" name="<?php echo $this->options->button_action_element_offset_name(); ?>" value="<?php echo $this->options->button_action_element_offset(); ?>" />px <span class="description"><?php echo __('[Negative value allowed. Use this filed to precisely set scroll position. Useful when you have overlapping elements.]', 'wpfront-scroll-top'); ?></span></span>
+                    </div>
+                    <div>
+                        <span><input class="alignment-holder" type="radio"/></span>
+                        <span class="sub-label"><a target="_blank" href="https://wpfront.com/wordpress-plugins/scroll-top-plugin/scroll-top-plugin-faq/"><?php echo __('How to find CSS selector?', 'wpfront-scroll-top'); ?></a></span>
+                    </div>
+                </div>
+                <br />
+                <label><input type="radio" class="button-action" name="<?php echo $this->options->button_action_name(); ?>" value="url" <?php echo $this->options->button_action() == 'url' ? 'checked' : ''; ?> /> <?php echo __('Link to Page', 'wpfront-scroll-top'); ?></label>
+                <div class="fields-container url hidden">
+                    <div>
+                        <span><input class="alignment-holder" type="radio"/></span>
+                        <span class="sub-label"><?php echo $this->options->button_action_page_url_label() . ':&nbsp;'; ?></span>
+                        <span class="url"><input class="url" name="<?php echo $this->options->button_action_page_url_name(); ?>" value="<?php echo $this->options->button_action_page_url(); ?>" /></span> 
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
 </table>
 
 <h3><?php echo __('Location', 'wpfront-scroll-top'); ?></h3>
@@ -404,7 +446,8 @@ namespace WPFront\Scroll_Top;
     <div>
         <input id="custom" name="<?php echo $this->options->image_name(); ?>" type="radio" value="custom" <?php echo ($this->options->image() == 'custom' ? 'checked' : ''); ?> />
         <label for="custom"><?php echo __('Custom URL', 'wpfront-scroll-top'); ?>
-            <input class="url" name="<?php echo $this->options->custom_url_name(); ?>" value="<?php echo $this->options->custom_url(); ?>"/>
+            <input id="custom-url-textbox" class="url" name="<?php echo $this->options->custom_url_name(); ?>" value="<?php echo $this->options->custom_url(); ?>"/>
+            <input type="button" id="media-library-button" class="button" value="<?php echo __('Media Library', 'wpfront-scroll-top'); ?>" />
         </label>
     </div>
     <table class="form-table">
@@ -413,7 +456,7 @@ namespace WPFront\Scroll_Top;
                 <?php echo $this->options->image_alt_label(); ?>
             </th>
             <td>
-                <input class="altText" name="<?php echo $this->options->image_alt_name(); ?>" value="<?php echo $this->options->image_alt(); ?>" />
+                <input id="alt-textbox" class="altText" name="<?php echo $this->options->image_alt_name(); ?>" value="<?php echo $this->options->image_alt(); ?>" />
             </td>
         </tr>
     </table>
@@ -422,48 +465,13 @@ namespace WPFront\Scroll_Top;
 <?php @$this->options_page_footer('scroll-top-plugin-settings/', 'scroll-top-plugin-faq/'); ?>
 
 <script type="text/javascript">
-    (function($) {
-        function setColorPicker(div) {
-            div.ColorPicker({
-                color: div.attr('color'),
-                onShow: function(colpkr) {
-                    $(colpkr).fadeIn(500);
-                    return false;
-                }, onHide: function(colpkr) {
-                    $(colpkr).fadeOut(500);
-                    return false;
-                },
-                onChange: function(hsb, hex, rgb) {
-                    div.css('backgroundColor', '#' + hex);
-                    div.next().text('#' + hex).next().val('#' + hex);
-                }
-            }).css('backgroundColor', div.attr('color'));
-        }
-
-        $('#wpfront-scroll-top-options').find(".color-selector").each(function(i, e) {
-            setColorPicker($(e));
+    (function() {
+        init_wpfront_scroll_top_options({ 
+            button_style: '<?php echo $this->options->button_style(); ?>', 
+            button_action: '<?php echo $this->options->button_action(); ?>', 
+            label_choose_image:  '<?php echo __('Choose Image', 'wpfront-scroll-top'); ?>',
+            label_select_image:  '<?php echo __('Select Image', 'wpfront-scroll-top'); ?>'
         });
-
-        $('#wpfront-scroll-top-options .pages-selection input[type="checkbox"]').change(function() {
-            var $this = $(this);
-            var $input = $this.parent().parent().parent().prev();
-            var $text = $input.val();
-            
-            if($this.prop('checked')) {
-                $text += ',' + $this.val();
-            } else {
-                $text = (',' + $text + ',').replace(',' + $this.val() + ',', ',');
-            }
-            
-            $text = $text.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-            $input.val($text);
-        });
-        
-        $('#wpfront-scroll-top-options input.button-style').change(function() {
-            $('#wpfront-scroll-top-options .button-options').hide().filter('.' + $(this).val()).show();
-        });
-        
-        $('#wpfront-scroll-top-options .button-options').hide().filter('.<?php echo $this->options->button_style(); ?>').show();
-    })(jQuery);
+    })();
 </script>
 

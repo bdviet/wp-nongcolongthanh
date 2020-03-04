@@ -1,4 +1,18 @@
 <?php
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+/**
+ * Utility class for working with JSON data
+ *
+ * Standard: PSR-2
+ * @link http://www.php-fig.org/psr/psr-2
+ *
+ * @subpackage classes/utilities
+ * @copyright (c) 2017, Snapcreek LLC
+ * @license	https://opensource.org/licenses/GPL-3.0 GNU Public License
+ */
+
+// Exit if accessed directly
+if (! defined('DUPLICATOR_VERSION')) exit;
 
 class DUP_JSON
 {
@@ -11,11 +25,17 @@ class DUP_JSON
 		JSON_ERROR_UTF8 => 'Malformed UTF-8 characters. To resolve see https://snapcreek.com/duplicator/docs/faqs-tech/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_campaign=problem_resolution&utm_content=malformed_utf8#faq-package-170-q'
 	);
 
+	/**
+	 * Used on PHP 5.3+ to better handle calling the json_encode method
+	 *
+	 * Returns a string containing the JSON representation of the supplied value
+	 *
+	 * @return string 
+	 */
 	public static function customEncode($value, $iteration = 1)
 	{
 		if (DUP_Util::$on_php_53_plus) {
-
-			$encoded = json_encode($value);
+            $encoded = DupLiteSnapJsonU::wp_json_encode_pprint($value);
 
 			switch (json_last_error()) {
 				case JSON_ERROR_NONE:
@@ -43,38 +63,32 @@ class DUP_JSON
 		}
 	}
 
-	public static function encode($value, $options = 0)
-	{
-		$result = json_encode($value, $options);
+    public static function safeEncode($data, $options = 0, $depth = 512)
+    {
+        try {
+            $jsonString = DupLiteSnapJsonU::wp_json_encode($data, $options, $depth);
+        } catch (Exception $e) {
+            $jsonString = false;
+        }
 
-		if ($result !== FALSE) {
-			return $result;
-		}
+        if (($jsonString === false) || trim($jsonString) == '') {
+            $jsonString = self::customEncode($value);
 
-		if (function_exists('json_last_error')) {
-			$message = self::$_messages[json_last_error()];
-		} else {
-			$message = __('One or more filenames isn\'t compatible with JSON encoding');
-		}
+            if (($jsonString === false) || trim($jsonString) == '') {
+                throw new Exception('Unable to generate JSON from object');
+            }
+        }
+        return $jsonString;
+    }
 
-		throw new RuntimeException($message);
-	}
-
-	public static function safeEncode($value)
-	{
-		$jsonString = json_encode($value);
-
-		if (($jsonString === false) || trim($jsonString) == '') {
-			$jsonString = self::customEncode($value);
-
-			if (($jsonString === false) || trim($jsonString) == '') {
-				throw new Exception('Unable to generate JSON from object');
-			}
-		}
-
-		return $jsonString;
-	}
-
+	/**
+	 * Attempts to only call the json_decode method directly
+	 *
+	 * Returns the value encoded in json in appropriate PHP type. Values true, false and null are returned as TRUE, FALSE and NULL respectively.
+	 * NULL is returned if the json cannot be decoded or if the encoded data is deeper than the recursion limit.
+	 *
+	 * @return object
+	 */
 	public static function decode($json, $assoc = false)
 	{
 		$result = json_decode($json, $assoc);
@@ -88,7 +102,7 @@ class DUP_JSON
 		} else {
 			throw new RuntimeException("DUP_JSON decode error");
 		}
-		
+
 	}
 
 	private static function makeUTF8($mixed)

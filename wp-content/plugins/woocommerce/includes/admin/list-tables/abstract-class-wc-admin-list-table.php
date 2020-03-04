@@ -2,8 +2,6 @@
 /**
  * List tables.
  *
- * @author   WooCommerce
- * @category Admin
  * @package  WooCommerce/Admin
  * @version  3.3.0
  */
@@ -66,7 +64,7 @@ abstract class WC_Admin_List_Table {
 		if ( $post_type === $this->list_table_type && 'bottom' === $which ) {
 			$counts = (array) wp_count_posts( $post_type );
 			unset( $counts['auto-draft'] );
-			$count  = array_sum( $counts );
+			$count = array_sum( $counts );
 
 			if ( 0 < $count ) {
 				return;
@@ -74,7 +72,7 @@ abstract class WC_Admin_List_Table {
 
 			$this->render_blank_state();
 
-			echo '<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } </style>';
+			echo '<style type="text/css">#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub  { display: none; } #posts-filter .tablenav.bottom { height: auto; } </style>';
 		}
 	}
 

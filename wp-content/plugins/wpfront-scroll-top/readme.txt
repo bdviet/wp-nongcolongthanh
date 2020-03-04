@@ -3,8 +3,8 @@ Contributors: syammohanm
 Donate link: http://wpfront.com/donate/
 Tags: scroll to top, back to top, scroll top, scroll up, wordpress scroll top
 Requires at least: 4.1
-Tested up to: 4.9.4
-Stable tag: 1.6.2
+Tested up to: 5.3
+Stable tag: 2.0.2
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -17,6 +17,8 @@ WPFront Scroll Top plugin allows the visitor to easily scroll back to the top of
 ### Features
 * Displays a button when user scrolls down the page.
 * Scrolls the page back to top with animation.
+* Link to an element within the page.
+* Link to a different page using URL.
 * Create text, image or Font Awesome button.
 * Set any image you want.
 * Hide on small devices.
@@ -31,15 +33,15 @@ Visit [WPFront Scroll Top Settings](http://wpfront.com/scroll-top-plugin-setting
 
 == Installation ==
 
-1. Click Plugins/Add New from the WordPress admin panel
-1. Search for "WPFront Scroll Top" and install
+1. Click Plugins/Add New from the WordPress admin panel.
+1. Search for "WPFront Scroll Top" and install.
 
 -or-
 
-1. Download the .zip package
-1. Unzip into the subdirectory 'wpfront-scroll-top' within your local WordPress plugins directory
-1. Refresh plugin page and activate plugin
-1. Configure plugin using *settings* link under plugin name or by going to WPFront/Scroll Top
+1. Download the .zip package.
+1. Unzip into the subdirectory 'wpfront-scroll-top' within your local WordPress plugins directory.
+1. Refresh plugin page and activate plugin.
+1. Configure plugin using *Scroll Top* link under 'Settings' menu.
 
 == Frequently Asked Questions ==
 
@@ -50,6 +52,15 @@ Visit [WPFront Scroll Top FAQ](http://wpfront.com/scroll-top-plugin-faq/) page f
 1. Settings page. 
 
 == Changelog ==
+
+= 2.0.2 =
+* Fixes WordPress 5.2 site health, wp_version_check, conflict.
+
+= 2.0.1 =
+* Link to element.
+* Link to page.
+* Select image from media library easily.
+* Performance improvements.
 
 = 1.6.2 =
 * Requires minimum PHP 5.3.
@@ -119,6 +130,12 @@ Visit [WPFront Scroll Top FAQ](http://wpfront.com/scroll-top-plugin-faq/) page f
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.0.2 =
+* Bug fix.
+
+= 2.0.1 =
+* New features added.
 
 = 1.6.2 =
 * Bug and compatibility fixes.

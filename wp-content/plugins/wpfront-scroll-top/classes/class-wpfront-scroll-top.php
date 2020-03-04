@@ -24,7 +24,6 @@
 
 namespace WPFront\Scroll_Top;
 
-require_once("base/class-wpfront-base.php");
 require_once("class-wpfront-scroll-top-options.php");
 
 /**
@@ -33,40 +32,110 @@ require_once("class-wpfront-scroll-top-options.php");
  * @author Syam Mohan <syam@wpfront.com>
  * @copyright 2013 WPFront.com
  */
-class WPFront_Scroll_Top extends WPFront_Base_ST {
-
+class WPFront_Scroll_Top {
     //Constants
-    const VERSION = '1.6.2';
+    const VERSION = '2.0.2';
     const OPTIONS_GROUP_NAME = 'wpfront-scroll-top-options-group';
     const OPTION_NAME = 'wpfront-scroll-top-options';
     const PLUGIN_SLUG = 'wpfront-scroll-top';
-
+    const PLUGIN_FILE = 'wpfront-scroll-top/wpfront-scroll-top.php';
+    
     //Variables
-    protected $iconsDIR;
-    protected $iconsURL;
+    protected $iconsDIR = '/tmp/icons/';
+    protected $iconsURL = '//tmp/icons/';
+    protected $pluginDIRRoot = '/tmp/';
+    protected $pluginURLRoot = '//tmp/';
     protected $options;
     protected $markupLoaded;
     protected $scriptLoaded;
     protected $min_file_suffix;
-
-    function __construct() {
-        parent::__construct(__FILE__, self::PLUGIN_SLUG);
-
+    
+    private static $instance = null;
+    
+    protected function __construct() {
         $this->markupLoaded = FALSE;
         $this->min_file_suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
-
-        //Root variables
-        $this->iconsDIR = $this->pluginDIRRoot . 'images/icons/';
-        $this->iconsURL = $this->pluginURLRoot . 'images/icons/';
-
-        add_action('wp_footer', array(&$this, 'write_markup'));
-        add_action('shutdown', array(&$this, 'shutdown_callback'));
     }
+    
+    public static function Instance() {
+        if(empty(self::$instance)) {
+            self::$instance = new WPFront_Scroll_Top();
+        }
+        
+        return self::$instance;
+    }
+    
+    public function init($pluginFile = null) {
+        //Root variables
+        $this->pluginURLRoot = plugins_url() . '/' . self::PLUGIN_SLUG . '/';
+        $this->iconsURL = $this->pluginURLRoot . 'images/icons/';
+        $this->pluginDIRRoot = plugin_dir_path($pluginFile);
+        $this->iconsDIR = $this->pluginDIRRoot . 'images/icons/';
+        
+        add_action('plugins_loaded', array($this, 'plugins_loaded'));
+        
+        $this->add_activation_redirect();
+        
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
+            add_action('admin_menu', array($this, 'admin_menu'));
+            add_filter('plugin_action_links', array($this, 'action_links'), 10, 2);
+            
+            add_action('admin_footer', array($this, 'write_markup'));
+        } else {
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+            
+            add_action('wp_footer', array($this, 'write_markup'));
+            add_action('shutdown', array($this, 'shutdown_callback'));
+        }
+    }
+    
+    public function action_links($links, $file) {
+        if ($file == self::PLUGIN_FILE) {
+            $settings_link = '<a href="' . menu_page_url(self::PLUGIN_SLUG, FALSE) . '">' . __('Settings', 'wpfront-scroll-top') . '</a>';
+            array_unshift($links, $settings_link);
+        }
+        return $links;
+    }
+    
+    protected function add_activation_redirect() {
+        add_action('activated_plugin', array($this, 'activated_plugin_callback'));
+        add_action('admin_init', array($this, 'admin_init_callback'), 999999);
+    }
+    
+    public function activated_plugin_callback($plugin) {
+        if ($plugin !== self::PLUGIN_FILE) {
+            return;
+        }
 
+        if (is_network_admin() || isset($_GET['activate-multi'])) {
+            return;
+        }
+        
+        $key = self::PLUGIN_SLUG . '-activation-redirect';
+        add_option($key, TRUE);
+    }
+    
+    public function admin_init_callback() {
+        $key = self::PLUGIN_SLUG . '-activation-redirect';
+
+        if (get_option($key, FALSE)) {
+            delete_option($key);
+
+            if (is_network_admin() || isset($_GET['activate-multi'])) {
+                return;
+            }
+
+            wp_safe_redirect(menu_page_url(self::PLUGIN_SLUG, FALSE));
+        }
+    }
+    
     //add scripts
     public function enqueue_scripts() {
-        if ($this->enabled() == FALSE)
+        if ($this->enabled() == FALSE) {
             return;
+        }
 
         $jsRoot = $this->pluginURLRoot . 'js/';
 
@@ -78,8 +147,9 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
 
     //add styles
     public function enqueue_styles() {
-        if ($this->enabled() == FALSE)
+        if ($this->enabled() == FALSE) {
             return;
+        }
 
         $cssRoot = $this->pluginURLRoot . 'css/';
 
@@ -113,32 +183,43 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
     }
 
     public function enqueue_options_scripts() {
+        wp_enqueue_media();
+        
         $this->enqueue_scripts();
-
+        
         $jsRoot = $this->pluginURLRoot . 'jquery-plugins/colorpicker/js/';
         wp_enqueue_script('jquery.eyecon.colorpicker', $jsRoot . 'colorpicker' . $this->min_file_suffix . '.js', array('jquery'), self::VERSION);
+        
+        $jsRoot = $this->pluginURLRoot . 'js/';
+        wp_enqueue_script('wpfront-scroll-top-options', $jsRoot . 'options' . $this->min_file_suffix . '.js', array('jquery'), self::VERSION);
     }
 
     //options page styles
     public function enqueue_options_styles() {
         $styleRoot = $this->pluginURLRoot . 'jquery-plugins/colorpicker/css/';
-        wp_enqueue_style('jquery.eyecon.colorpicker.colorpicker', $styleRoot . 'colorpicker' . $this->min_file_suffix . '.css', array(), self::VERSION);
+        wp_enqueue_style('jquery.eyecon.colorpicker', $styleRoot . 'colorpicker' . $this->min_file_suffix . '.css', array(), self::VERSION);
 
         $styleRoot = $this->pluginURLRoot . 'css/';
         wp_enqueue_style('wpfront-scroll-top-options', $styleRoot . 'options' . $this->min_file_suffix . '.css', array(), self::VERSION);
     }
+    
+    public function set_options($options) {
+        $this->options = $options;
+    }
 
     public function plugins_loaded() {
         //load plugin options
-        $this->options = new WPFront_Scroll_Top_Options(self::OPTION_NAME, self::PLUGIN_SLUG);
+        $this->set_options(new WPFront_Scroll_Top_Options(self::OPTION_NAME, self::PLUGIN_SLUG));
 
-        if($this->options->javascript_async())
+        if($this->options->javascript_async()) {
             add_filter('script_loader_tag', array($this, 'script_loader_tag'), 999999, 3);
+        }
     }
 
     public function script_loader_tag($tag, $handle, $src) {
-        if($handle === 'wpfront-scroll-top')
+        if($handle === 'wpfront-scroll-top') {
             return '<script type="text/javascript" src="' . $src . '" async="async" defer="defer"></script>' . "\n";
+        }
 
         return $tag;
     }
@@ -158,8 +239,9 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
             }
         }
 
-        if ($flag)
+        if ($flag) {
             $this->write_markup();
+        }
     }
 
     //writes the html and script for the button
@@ -168,15 +250,19 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
             return;
         }
 
-        if ($this->scriptLoaded != TRUE) {
+        if (!$this->scriptLoaded) {
             return;
         }
 
-        if (WPFront_Static_ST::doing_ajax()) {
+        if ($this->doing_ajax()) {
             return;
         }
-
+        
         if ($this->enabled()) {
+            if(is_admin()) {
+                $this->options->set_button_action('top');
+            }
+            
             include($this->pluginDIRRoot . 'templates/scroll-top-template.php');
 
             echo '<script type="text/javascript">';
@@ -195,6 +281,10 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
                                 'hide_iframe' => $this->options->hide_iframe(),
                                 'auto_hide' => $this->options->auto_hide(),
                                 'auto_hide_after' => $this->options->auto_hide_after(),
+                                'button_action' => $this->options->button_action(),
+                                'button_action_element_selector' => $this->options->button_action_element_selector(),
+                                'button_action_container_selector' => $this->options->button_action_container_selector(),
+                                'button_action_element_offset' => $this->options->button_action_element_offset()
                             )) . ');';
             echo        '} else {';
             echo            'setTimeout(wpfront_scroll_top_init, 100);';
@@ -206,23 +296,55 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
 
         $this->markupLoaded = TRUE;
     }
+    
+    protected function doing_ajax() {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            return TRUE;
+        }
 
-    private function enabled() {
-        if (!$this->options->enabled())
-            return FALSE;
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            return TRUE;
+        }
 
-        if ($this->options->hide_wpadmin() && is_admin())
-            return FALSE;
+        if (!empty($_SERVER['REQUEST_URI']) && strtolower($_SERVER['REQUEST_URI']) == '/wp-admin/async-upload.php') {
+            return TRUE;
+        }
 
-        if (!$this->filter_pages())
-            return FALSE;
-
-        return TRUE;
+        return FALSE;
+    }
+    
+    protected function apply_button_action_html($html) {
+        if($this->options->button_action() == "url") {
+            return sprintf('<a href="%s">' . $html . '</a>', $this->options->button_action_page_url());
+        }
+        
+        return $html;
     }
 
-    private function filter_pages() {
-        if (is_admin())
+    protected function enabled() {
+        $enabled = TRUE;
+        
+        if ($enabled && !$this->options->enabled()) {
+            $enabled = FALSE;
+        }
+
+        if ($enabled && $this->options->hide_wpadmin() && is_admin()) {
+            $enabled = FALSE;
+        }
+
+        if ($enabled && !$this->filter_pages()) {
+            $enabled = FALSE;
+        }
+
+        $enabled = apply_filters('wpfront_scroll_top_enabled', $enabled);
+        
+        return $enabled;
+    }
+
+    protected function filter_pages() {
+        if (is_admin()) {
             return TRUE;
+        }
 
         switch ($this->options->display_pages()) {
             case 1:
@@ -238,19 +360,23 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
                 }
                 if ($this->options->display_pages() == 2) {
                     if ($ID !== FALSE) {
-                        if ($this->filter_pages_contains($this->options->include_pages(), $ID) === FALSE)
+                        if ($this->filter_pages_contains($this->options->include_pages(), $ID) === FALSE) {
                             return FALSE;
-                        else
+                        }
+                        else {
                             return TRUE;
+                        }
                     }
                     return FALSE;
                 }
                 if ($this->options->display_pages() == 3) {
                     if ($ID !== FALSE) {
-                        if ($this->filter_pages_contains($this->options->exclude_pages(), $ID) === FALSE)
+                        if ($this->filter_pages_contains($this->options->exclude_pages(), $ID) === FALSE) {
                             return TRUE;
-                        else
+                        }
+                        else {
                             return FALSE;
+                        }
                     }
                     return TRUE;
                 }
@@ -259,13 +385,14 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
         return TRUE;
     }
 
-    public function filter_pages_contains($list, $key) {
+    protected function filter_pages_contains($list, $key) {
         return strpos(',' . $list . ',', ',' . $key . ',');
     }
 
-    private function image() {
-        if ($this->options->image() == 'custom')
+    protected function image() {
+        if ($this->options->image() == 'custom') {
             return $this->options->custom_url();
+        }
         return $this->iconsURL . $this->options->image();
     }
 
@@ -291,5 +418,63 @@ class WPFront_Scroll_Top extends WPFront_Base_ST {
 
         return $objects;
     }
+    
+    public function options_page() {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'wpfront-scroll-top'));
+            return;
+        }
 
+        include($this->pluginDIRRoot . 'templates/options-template.php');
+    }
+
+    protected function options_page_header($title, $optionsGroupName) {
+        echo '<div class="wrap">';
+        echo '<h2>' . $title . '</h2>';
+        echo '<div id="' . self::PLUGIN_SLUG . '-options" class="inside">';
+        echo '<form method="post" action="options.php">';
+        @settings_fields($optionsGroupName);
+        @do_settings_sections(self::PLUGIN_SLUG);
+
+        if ((isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true') || (isset($_GET['updated']) && $_GET['updated'] == 'true')) {
+            echo '
+            <div class="updated">
+                <p>
+                    <strong>' . __('If you have a caching plugin, clear the cache for the new settings to take effect.', 'wpfront-scroll-top') . '</strong>
+                </p>
+            </div>
+            ';
+        }
+    }
+
+    protected function options_page_footer($settingsLink, $FAQLink) {
+        @$this->submit_button();
+
+        echo '</form>';
+        echo '</div>';
+        echo '</div>';
+
+        $this->settingsLink = $settingsLink;
+        $this->FAQLink = $FAQLink;
+
+        add_filter('admin_footer_text', array($this, 'admin_footer_text'));
+    }
+
+    public function admin_footer_text($text) {
+        $settingsLink = sprintf('<a href="%s" target="_blank">%s</a>', 'https://wpfront.com/' . $this->settingsLink, __('Settings Description', 'wpfront-scroll-top'));
+        $reviewLink = sprintf('<a href="%s" target="_blank">%s</a>', 'https://wordpress.org/support/plugin/' . self::PLUGIN_SLUG . '/reviews/', __('Write a Review', 'wpfront-scroll-top'));
+        $donateLink = sprintf('<a href="%s" target="_blank">%s</a>', 'https://wpfront.com/donate/', __('Buy me a Beer or Coffee', 'wpfront-scroll-top'));
+
+        return sprintf('%s | %s | %s | %s', $settingsLink, $reviewLink, $donateLink, $text);
+    }
+
+    //for compatibility
+    public function submit_button() {
+        if (function_exists('submit_button')) {
+            submit_button();
+        } else {
+            echo '<p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="' . __('Save Changes', 'wpfront-scroll-top') . '" /></p>';
+        }
+    }
 }
+

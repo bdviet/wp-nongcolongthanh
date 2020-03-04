@@ -1,6 +1,32 @@
 <?php
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 require_once(DUPLICATOR_PLUGIN_PATH . '/classes/ui/class.ui.dialog.php');
-$current_tab = isset($_REQUEST['tab']) ? esc_html($_REQUEST['tab']) : 'list';
+
+$current_tab = isset($_REQUEST['tab']) ? sanitize_text_field($_REQUEST['tab']) : 'list';
+$_GET['_wpnonce'] = isset($_GET['_wpnonce']) ? $_GET['_wpnonce'] : null;
+
+$txt_invalid_msg1 = __("An invalid request was made to this page.", 'duplicator');
+$txt_invalid_msg2 = __("Please retry by going to the", 'duplicator');
+$txt_invalid_lnk  = __("Packages Screen", 'duplicator');
+
+switch ($current_tab) {
+	case 'new1':
+		if (!wp_verify_nonce($_GET['_wpnonce'], 'new1-package')) {
+			die(printf("%s <br/>%s <a href='admin.php?page=duplicator'>%s</a>.", $txt_invalid_msg1, $txt_invalid_msg2, $txt_invalid_lnk));
+		}
+		break;
+	case 'new2':
+		if (!wp_verify_nonce($_GET['_wpnonce'], 'new2-package')) {
+			die(printf("%s <br/>%s <a href='admin.php?page=duplicator'>%s</a>.", $txt_invalid_msg1, $txt_invalid_msg2, $txt_invalid_lnk));
+		}
+		break;
+	case 'new3':
+		if (!wp_verify_nonce($_GET['_wpnonce'], 'new3-package')) {
+			die(printf("%s <br/>%s <a href='admin.php?page=duplicator'>%s</a>.", $txt_invalid_msg1, $txt_invalid_msg2, $txt_invalid_lnk));
+		}
+		break;
+}
 ?>
 
 <style>
@@ -9,8 +35,8 @@ $current_tab = isset($_REQUEST['tab']) ? esc_html($_REQUEST['tab']) : 'list';
 	table#dup-toolbar td .button {box-shadow: none !important;}
 	table#dup-toolbar {width:100%; border:0 solid red; padding: 0; margin:8px 0 4px 0; height: 35px}
 	table#dup-toolbar td:last-child {font-size:16px; width:100%; text-align: right; vertical-align: bottom;white-space:nowrap;}
-	table#dup-toolbar td:last-child a {top:0; font-size:16px !important; margin-top:10px }
-	table#dup-toolbar td:last-child span {display:inline-block; font-weight: bold; padding:0 12px 5px 5px; color:#000}
+	table#dup-toolbar td:last-child a {top:0; margin-top:10px; font-weight: bold; }
+	table#dup-toolbar td:last-child span {display:inline-block; font-weight: bold; padding:0 5px 5px 5px; color:#000}
 	hr.dup-toolbar-line {margin:2px 0 10px 0}
 	
     /*WIZARD TABS */

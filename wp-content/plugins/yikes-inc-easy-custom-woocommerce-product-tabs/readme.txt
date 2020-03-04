@@ -3,8 +3,8 @@ Contributors: yikesinc, eherman24, liljimmi, yikesitskevin, metalandcoffee, mial
 Donate link: http://yikesinc.com
 Tags: woocommerce, product tabs, repeatable, duplicate, customize, custom, tabs, product, woo, commerce
 Requires at least: 3.8
-Tested up to: 4.9.1
-Stable tag: 1.6.4
+Tested up to: 5.3
+Stable tag: 1.6.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,6 +74,38 @@ Yes! Since v1.4 we've added the necessary code to ensure the custom tab data is 
 
 
 == Changelog ==
+
+= 1.6.13 - January 22nd, 2020 =
+* Support WooCommerce 3.9.
+
+= 1.6.12 - November 20th, 2019 =
+* Support WooCommerce 3.8.
+
+= 1.6.11 - September 25th, 2019 =
+* Adding additional checks to post global before enqueueing assets.
+
+= 1.6.10 - April 19th, 2019 =
+* Updating WC compatibility.
+* Fixing JS issue with WP backwards compatibility for versions < 4.7.
+
+= 1.6.9 - January 18th, 2019 =
+* Fixing an issue where the visual editor shows a small portion of the content on product edit pages.
+
+= 1.6.8 - January 2nd, 2019 =
+* Fixing some HTML markup.
+* Applying PHPCS fixes.
+
+= 1.6.7 - December 18th, 2018 =
+* Adding filter to help allow importing of custom tabs.
+* Changing our export filters so custom tabs work with WooCommerce's native meta export/import features.
+* The default capability for all admin pages is now `publish_products`.
+
+= 1.6.6 - October 26th, 2018 =
+* Bumping WooCo Compatibility.
+* Changed `wp_send_json_failure()` to `wp_send_json_error()`.
+
+= 1.6.5 - October 3rd, 2018 =
+* Bumping WooCo Compatibility.
 
 = 1.6.4 - January 9th, 2018 =
 * Happy new year! 
