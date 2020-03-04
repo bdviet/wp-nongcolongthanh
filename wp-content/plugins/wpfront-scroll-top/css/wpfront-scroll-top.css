@@ -13,3 +13,9 @@
     -moz-box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.5);
     box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.5);
 }
+
+#wpfront-scroll-top-container a {
+    outline-style: none;
+    box-shadow: none;
+    text-decoration: none;
+}

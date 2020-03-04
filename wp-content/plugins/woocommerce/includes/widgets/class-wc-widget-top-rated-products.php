@@ -1,18 +1,16 @@
 <?php
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
 /**
  * Top Rated Products Widget.
  * Gets and displays top rated products in an unordered list.
  *
- * @author   WooThemes
- * @category Widgets
- * @package  WooCommerce/Widgets
- * @version  3.3.0
- * @extends  WC_Widget
+ * @package WooCommerce/Widgets
+ * @version 3.3.0
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Widget top rated products class.
  */
 class WC_Widget_Top_Rated_Products extends WC_Widget {
 
@@ -47,9 +45,8 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 	 * Output widget.
 	 *
 	 * @see WP_Widget
-	 *
-	 * @param array $args
-	 * @param array $instance
+	 * @param array $args     Arguments.
+	 * @param array $instance Widget instance.
 	 */
 	public function widget( $args, $instance ) {
 
@@ -71,7 +68,7 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 			'order'          => 'DESC',
 			'meta_query'     => WC()->query->get_meta_query(),
 			'tax_query'      => WC()->query->get_tax_query(),
-		);
+		); // WPCS: slow query ok.
 
 		$r = new WP_Query( $query_args );
 
@@ -82,7 +79,7 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 			echo wp_kses_post( apply_filters( 'woocommerce_before_widget_product_list', '<ul class="product_list_widget">' ) );
 
 			$template_args = array(
-				'widget_id'   => $args['widget_id'],
+				'widget_id'   => isset( $args['widget_id'] ) ? $args['widget_id'] : $this->widget_id,
 				'show_rating' => true,
 			);
 
@@ -100,7 +97,7 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 
 		$content = ob_get_clean();
 
-		echo $content;
+		echo $content; // WPCS: XSS ok.
 
 		$this->cache_widget( $args, $content );
 	}

@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * WC Order Data Store: Stored in CPT.
  *
  * @version  3.0.0
- * @category Class
- * @author   WooThemes
  */
 class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implements WC_Object_Data_Store_Interface, WC_Order_Data_Store_Interface {
 
@@ -83,9 +81,9 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	 * @param WC_Order $order Order object.
 	 */
 	public function create( &$order ) {
-		$order->set_order_key( 'wc_' . apply_filters( 'woocommerce_generate_order_key', uniqid( 'order_' ) ) );
+		$order->set_order_key( wc_generate_order_key() );
 		parent::create( $order );
-		do_action( 'woocommerce_new_order', $order->get_id() );
+		do_action( 'woocommerce_new_order', $order->get_id(), $order );
 	}
 
 	/**
@@ -158,10 +156,20 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 			$order->set_date_paid( $order->get_date_created( 'edit' ) );
 		}
 
+		// Also grab the current status so we can compare.
+		$previous_status = get_post_status( $order->get_id() );
+
 		// Update the order.
 		parent::update( $order );
 
-		do_action( 'woocommerce_update_order', $order->get_id() );
+		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
+		$new_status = $order->get_status( 'edit' );
+
+		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
+			do_action( 'woocommerce_new_order', $order->get_id(), $order );
+		} else {
+			do_action( 'woocommerce_update_order', $order->get_id(), $order );
+		}
 	}
 
 	/**
@@ -191,26 +199,19 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 
 		foreach ( $props_to_update as $meta_key => $prop ) {
 			$value = $order->{"get_$prop"}( 'edit' );
-
-			if ( 'date_paid' === $prop ) {
-				// In 3.0.x we store this as a UTC timestamp.
-				update_post_meta( $id, $meta_key, ! is_null( $value ) ? $value->getTimestamp() : '' );
-
-				// In 2.6.x date_paid was stored as _paid_date in local mysql format.
-				update_post_meta( $id, '_paid_date', ! is_null( $value ) ? $value->date( 'Y-m-d H:i:s' ) : '' );
-
-			} elseif ( 'date_completed' === $prop ) {
-				// In 3.0.x we store this as a UTC timestamp.
-				update_post_meta( $id, $meta_key, ! is_null( $value ) ? $value->getTimestamp() : '' );
-
-				// In 2.6.x date_paid was stored as _paid_date in local mysql format.
-				update_post_meta( $id, '_completed_date', ! is_null( $value ) ? $value->date( 'Y-m-d H:i:s' ) : '' );
-
-			} else {
-				update_post_meta( $id, $meta_key, $value );
+			$value = is_string( $value ) ? wp_slash( $value ) : $value;
+			switch ( $prop ) {
+				case 'date_paid':
+				case 'date_completed':
+					$value = ! is_null( $value ) ? $value->getTimestamp() : '';
+					break;
 			}
 
-			$updated_props[] = $prop;
+			$updated = $this->update_or_delete_post_meta( $order, $meta_key, $value );
+
+			if ( $updated ) {
+				$updated_props[] = $prop;
+			}
 		}
 
 		$address_props = array(
@@ -243,27 +244,49 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 		foreach ( $address_props as $props_key => $props ) {
 			$props_to_update = $this->get_props_to_update( $order, $props );
 			foreach ( $props_to_update as $meta_key => $prop ) {
-				$value = $order->{"get_$prop"}( 'edit' );
-				update_post_meta( $id, $meta_key, $value );
-				$updated_props[] = $prop;
-				$updated_props[] = $props_key;
+				$value   = $order->{"get_$prop"}( 'edit' );
+				$value   = is_string( $value ) ? wp_slash( $value ) : $value;
+				$updated = $this->update_or_delete_post_meta( $order, $meta_key, $value );
+
+				if ( $updated ) {
+					$updated_props[] = $prop;
+					$updated_props[] = $props_key;
+				}
 			}
 		}
 
 		parent::update_post_meta( $order );
 
 		// If address changed, store concatenated version to make searches faster.
-		if ( in_array( 'billing', $updated_props ) || ! metadata_exists( 'post', $id, '_billing_address_index' ) ) {
+		if ( in_array( 'billing', $updated_props, true ) || ! metadata_exists( 'post', $id, '_billing_address_index' ) ) {
 			update_post_meta( $id, '_billing_address_index', implode( ' ', $order->get_address( 'billing' ) ) );
 		}
-		if ( in_array( 'shipping', $updated_props ) || ! metadata_exists( 'post', $id, '_shipping_address_index' ) ) {
+		if ( in_array( 'shipping', $updated_props, true ) || ! metadata_exists( 'post', $id, '_shipping_address_index' ) ) {
 			update_post_meta( $id, '_shipping_address_index', implode( ' ', $order->get_address( 'shipping' ) ) );
 		}
 
+		// Legacy date handling. @todo remove in 4.0.
+		if ( in_array( 'date_paid', $updated_props, true ) ) {
+			$value = $order->get_date_paid( 'edit' );
+			// In 2.6.x date_paid was stored as _paid_date in local mysql format.
+			update_post_meta( $id, '_paid_date', ! is_null( $value ) ? $value->date( 'Y-m-d H:i:s' ) : '' );
+		}
+
+		if ( in_array( 'date_completed', $updated_props, true ) ) {
+			$value = $order->get_date_completed( 'edit' );
+			// In 2.6.x date_paid was stored as _paid_date in local mysql format.
+			update_post_meta( $id, '_completed_date', ! is_null( $value ) ? $value->date( 'Y-m-d H:i:s' ) : '' );
+		}
+
 		// If customer changed, update any downloadable permissions.
-		if ( in_array( 'customer_user', $updated_props ) || in_array( 'billing_email', $updated_props ) ) {
+		if ( in_array( 'customer_id', $updated_props ) || in_array( 'billing_email', $updated_props ) ) {
 			$data_store = WC_Data_Store::load( 'customer-download' );
 			$data_store->update_user_by_order_id( $id, $order->get_customer_id(), $order->get_billing_email() );
+		}
+
+		// Mark user account as active.
+		if ( in_array( 'customer_id', $updated_props, true ) ) {
+			wc_update_user_last_active( $order->get_customer_id() );
 		}
 
 		do_action( 'woocommerce_order_object_updated_props', $order, $updated_props );
@@ -455,7 +478,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 				AND     posts.post_status = 'wc-pending'
 				AND     posts.post_modified < %s",
 				// @codingStandardsIgnoreEnd
-				date( 'Y-m-d H:i:s', absint( $date ) )
+				gmdate( 'Y-m-d H:i:s', absint( $date ) )
 			)
 		);
 
@@ -479,8 +502,10 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 		 * @var array
 		 */
 		$search_fields = array_map(
-			'wc_clean', apply_filters(
-				'woocommerce_shop_order_search_fields', array(
+			'wc_clean',
+			apply_filters(
+				'woocommerce_shop_order_search_fields',
+				array(
 					'_billing_address_index',
 					'_shipping_address_index',
 					'_billing_last_name',
@@ -586,6 +611,87 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	}
 
 	/**
+	 * Return array of coupon_code => meta_key for coupon which have usage limit and have tentative keys.
+	 * Pass $coupon_id if key for only one of the coupon is needed.
+	 *
+	 * @param WC_Order $order     Order object.
+	 * @param int      $coupon_id If passed, will return held key for that coupon.
+	 *
+	 * @return array|string Key value pair for coupon code and meta key name. If $coupon_id is passed, returns meta_key for only that coupon.
+	 */
+	public function get_coupon_held_keys( $order, $coupon_id = null ) {
+		$held_keys = $order->get_meta( '_coupon_held_keys' );
+		if ( $coupon_id ) {
+			return isset( $held_keys[ $coupon_id ] ) ? $held_keys[ $coupon_id ] : null;
+		}
+		return $held_keys;
+	}
+
+	/**
+	 * Return array of coupon_code => meta_key for coupon which have usage limit per customer and have tentative keys.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @param int      $coupon_id If passed, will return held key for that coupon.
+	 *
+	 * @return mixed
+	 */
+	public function get_coupon_held_keys_for_users( $order, $coupon_id = null ) {
+		$held_keys_for_user = $order->get_meta( '_coupon_held_keys_for_users' );
+		if ( $coupon_id ) {
+			return isset( $held_keys_for_user[ $coupon_id ] ) ? $held_keys_for_user[ $coupon_id ] : null;
+		}
+		return $held_keys_for_user;
+	}
+
+	/**
+	 * Add/Update list of meta keys that are currently being used by this order to hold a coupon.
+	 * This is used to figure out what all meta entries we should delete when order is cancelled/completed.
+	 *
+	 * @param WC_Order $order              Order object.
+	 * @param array    $held_keys          Array of coupon_code => meta_key.
+	 * @param array    $held_keys_for_user Array of coupon_code => meta_key for held coupon for user.
+	 *
+	 * @return mixed
+	 */
+	public function set_coupon_held_keys( $order, $held_keys, $held_keys_for_user ) {
+		if ( is_array( $held_keys ) && 0 < count( $held_keys ) ) {
+			$order->update_meta_data( '_coupon_held_keys', $held_keys );
+		}
+		if ( is_array( $held_keys_for_user ) && 0 < count( $held_keys_for_user ) ) {
+			$order->update_meta_data( '_coupon_held_keys_for_users', $held_keys_for_user );
+		}
+	}
+
+	/**
+	 * Release all coupons held by this order.
+	 *
+	 * @param WC_Order $order Current order object.
+	 * @param bool     $save  Whether to delete keys from DB right away. Could be useful to pass `false` if you are building a bulk request.
+	 */
+	public function release_held_coupons( $order, $save = true ) {
+		$coupon_held_keys = $this->get_coupon_held_keys( $order );
+		if ( is_array( $coupon_held_keys ) ) {
+			foreach ( $coupon_held_keys as $coupon_id => $meta_key ) {
+				delete_post_meta( $coupon_id, $meta_key );
+			}
+		}
+		$order->delete_meta_data( '_coupon_held_keys' );
+
+		$coupon_held_keys_for_users = $this->get_coupon_held_keys_for_users( $order );
+		if ( is_array( $coupon_held_keys_for_users ) ) {
+			foreach ( $coupon_held_keys_for_users as $coupon_id => $meta_key ) {
+				delete_post_meta( $coupon_id, $meta_key );
+			}
+		}
+		$order->delete_meta_data( '_coupon_held_keys_for_users' );
+
+		if ( $save ) {
+			$order->save_meta_data();
+		}
+
+	}
+
+	/**
 	 * Gets information about whether stock was reduced.
 	 *
 	 * @param WC_Order|int $order Order ID or order object.
@@ -680,7 +786,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 
 				// Remove any existing meta queries for the same keys to prevent conflicts.
 				$existing_queries = wp_list_pluck( $wp_query_args['meta_query'], 'key', true );
-				$meta_query_index = array_search( $db_key, $existing_queries );
+				$meta_query_index = array_search( $db_key, $existing_queries, true );
 				if ( false !== $meta_query_index ) {
 					unset( $wp_query_args['meta_query'][ $meta_query_index ] );
 				}
@@ -696,6 +802,20 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 				$wp_query_args['errors'][] = $customer_query;
 			} else {
 				$wp_query_args['meta_query'][] = $customer_query;
+			}
+		}
+
+		if ( isset( $query_vars['anonymized'] ) ) {
+			if ( $query_vars['anonymized'] ) {
+				$wp_query_args['meta_query'][] = array(
+					'key'   => '_anonymized',
+					'value' => 'yes',
+				);
+			} else {
+				$wp_query_args['meta_query'][] = array(
+					'key'     => '_anonymized',
+					'compare' => 'NOT EXISTS',
+				);
 			}
 		}
 

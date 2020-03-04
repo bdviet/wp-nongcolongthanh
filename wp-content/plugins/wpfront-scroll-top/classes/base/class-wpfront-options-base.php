@@ -73,17 +73,20 @@ class WPFront_Options_Base_ST {
         };
 
         $this->__data[$name . '_name'] = $this->__data[$name];
-        
         //dynamic function returning option name for settings page
         $this->__data[$name . '_name']['func'] = function($self, $data) {
             return $self->__optionName . "[" . $data["name"] . "]";
         };
 
         $this->__data[$name . '_label'] = $this->__data[$name];
-
         //dynamic function returning option label for settings page
         $this->__data[$name . '_label']['func'] = function($self, $data) {
             return __($data["label"], $self->__localizeSlug);
+        };
+        
+        $this->__data['set_' . $name] = $this->__data[$name];
+        $this->__data['set_' . $name]['func'] = function($self, $data, $value) {
+            $self->__options[$data["name"]] = $value;
         };
 
         $this->lastOptionName = $name;

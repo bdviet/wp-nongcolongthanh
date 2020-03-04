@@ -3243,7 +3243,7 @@ msgstr "Giảm giá theo phần trăm"
 msgctxt "shipping packages"
 msgid "Shipping"
 msgid_plural "Shipping %d"
-msgstr[0] "Giao hàng %d"
+msgstr[0] "Giao hàng"
 
 #: includes/shortcodes/class-wc-shortcode-my-account.php:52
 msgid "Your password has been reset successfully."

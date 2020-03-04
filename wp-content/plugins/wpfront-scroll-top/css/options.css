@@ -79,4 +79,50 @@
     width: 70%;
 }
 
+#wpfront-scroll-top-options div.button-action-container .alignment-holder
+{
+    visibility: hidden;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container
+{
+    display: table;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container.hidden
+{
+    display: none;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container div
+{
+    display: table-row;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container div span
+{
+    display: table-cell;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container div span.description
+{
+    display:inline;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container.url
+{
+    width: 100%;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container.url span.url
+{
+    width: 90%;
+}
+
+#wpfront-scroll-top-options div.button-action-container div.fields-container.url span.url input.url
+{
+    width: 100%;
+    max-width: 650px;
+}
+
 

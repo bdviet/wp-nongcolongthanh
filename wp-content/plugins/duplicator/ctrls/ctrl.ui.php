@@ -1,12 +1,14 @@
 <?php
-if ( ! defined('DUPLICATOR_VERSION') ) exit; // Exit if accessed directly
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+// Exit if accessed directly
+if (! defined('DUPLICATOR_VERSION')) exit;
 
 require_once(DUPLICATOR_PLUGIN_PATH . '/ctrls/ctrl.base.php'); 
 require_once(DUPLICATOR_PLUGIN_PATH . '/classes/ui/class.ui.viewstate.php');
 
 /**
  * Controller for Tools 
- * @package Dupicator\ctrls
+ * @package Duplicator\ctrls
  */
 class DUP_CTRL_UI extends DUP_CTRL_Base
 {	 
@@ -14,7 +16,6 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 	function __construct() 
 	{
 		add_action('wp_ajax_DUP_CTRL_UI_SaveViewState',	      array($this,	  'SaveViewState'));
-		add_action('wp_ajax_DUP_CTRL_UI_GetViewStateList',	  array($this,	  'GetViewStateList'));
 	}
 
 
@@ -38,6 +39,10 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
      */
 	public function SaveViewState($post) 
 	{
+        DUP_Handler::init_error_handler();
+		check_ajax_referer('DUP_CTRL_UI_SaveViewState', 'nonce');
+		DUP_Util::hasCapability('export');
+
 		$post = $this->postParamMerge($post);
 		$result = new DUP_CTRL_Result($this);
 	
@@ -45,13 +50,24 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 		{
 			//CONTROLLER LOGIC
 			$post  = stripslashes_deep($_POST);
-			$key   = esc_html($post['key']);
-			$value = esc_html($post['value']);
-			$success = DUP_UI_ViewState::save($key, $value);
+
+			if (!empty($post['states'])) {
+				$view_state = DUP_UI_ViewState::getArray();
+				foreach ($post['states'] as $state) {
+					$key   = sanitize_text_field($state['key']);
+					$value = sanitize_text_field($state['value']);
+					$view_state[$key] = $value;
+				}
+				$success = DUP_UI_ViewState::setArray($view_state);
+			} else {
+				$key   = sanitize_text_field($post['key']);
+				$value = sanitize_text_field($post['value']);
+				$success = DUP_UI_ViewState::save($key, $value);
+			}		
 
 			$payload = array();
-			$payload['key']    = $key;
-			$payload['value']  = $value;
+			$payload['key']    = esc_html($key);
+			$payload['value']  = esc_html($value);
 			$payload['update-success'] = $success;
 			
 			//RETURN RESULT
@@ -67,10 +83,8 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
     }
 	
 	/** 
-     * Returns a JSON list of all saved view state items
-	 * 
-	 * @notes: Testing: See Testing Interface
-	 * URL = /wp-admin/admin-ajax.php?action=DUP_CTRL_UI_GetViewStateList
+   * Returns a JSON list of all saved view state items
+	 *
 	 * 
 	 * <code>
 	 *	See SaveViewState()
@@ -95,7 +109,5 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 		{
 			$result->processError($exc);
 		}
-    }
-	
-	
+  }	
 }

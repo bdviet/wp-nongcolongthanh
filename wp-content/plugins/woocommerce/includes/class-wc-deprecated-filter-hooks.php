@@ -7,9 +7,7 @@
  * @version 3.3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles deprecation notices and triggering of legacy filter hooks
@@ -58,19 +56,8 @@ class WC_Deprecated_Filter_Hooks extends WC_Deprecated_Hooks {
 		'default_checkout_billing_postcode'          => 'default_checkout_postcode',
 		'woocommerce_system_status_environment_rows' => 'woocommerce_debug_posting',
 		'woocommerce_credit_card_type_labels'        => 'wocommerce_credit_card_type_labels',
-		'woocommerce_get_script_data'                => array(
-			'woocommerce_params',
-			'wc_geolocation_params',
-			'wc_single_product_params',
-			'wc_checkout_params',
-			'wc_address_i18n_params',
-			'wc_cart_params',
-			'wc_cart_fragments_params',
-			'wc_add_to_cart_params',
-			'wc_add_to_cart_variation_params',
-			'wc_country_select_params',
-			'wc_password_strength_meter_params',
-		),
+		'woocommerce_settings_tabs_advanced'         => 'woocommerce_settings_tabs_api',
+		'woocommerce_settings_advanced'              => 'woocommerce_settings_api',
 	);
 
 	/**
@@ -114,6 +101,8 @@ class WC_Deprecated_Filter_Hooks extends WC_Deprecated_Hooks {
 		'default_checkout_postcode'                  => '3.0.0',
 		'woocommerce_debug_posting'                  => '3.0.0',
 		'wocommerce_credit_card_type_labels'         => '3.0.0',
+		'woocommerce_settings_tabs_api'              => '3.4.0',
+		'woocommerce_settings_api'                   => '3.4.0',
 	);
 
 	/**

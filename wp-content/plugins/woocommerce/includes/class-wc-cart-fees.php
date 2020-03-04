@@ -6,13 +6,11 @@
  *
  * We suggest using the action woocommerce_cart_calculate_fees hook for adding fees.
  *
- * @author  Automattic
  * @package WooCommerce/Classes
+ * @version 3.2.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WC_Cart_Fees class.
@@ -80,7 +78,7 @@ final class WC_Cart_Fees {
 	public function add_fee( $args = array() ) {
 		$fee_props            = (object) wp_parse_args( $args, $this->default_fee_props );
 		$fee_props->name      = $fee_props->name ? $fee_props->name : __( 'Fee', 'woocommerce' );
-		$fee_props->tax_class = in_array( $fee_props->tax_class, array_merge( WC_Tax::get_tax_classes(), WC_Tax::get_tax_class_slugs() ), true ) ? $fee_props->tax_class: '';
+		$fee_props->tax_class = in_array( $fee_props->tax_class, array_merge( WC_Tax::get_tax_classes(), WC_Tax::get_tax_class_slugs() ), true ) ? $fee_props->tax_class : '';
 		$fee_props->taxable   = wc_string_to_bool( $fee_props->taxable );
 		$fee_props->amount    = wc_format_decimal( $fee_props->amount );
 
@@ -92,7 +90,9 @@ final class WC_Cart_Fees {
 			return new WP_Error( 'fee_exists', __( 'Fee has already been added.', 'woocommerce' ) );
 		}
 
-		return $this->fees[ $fee_props->id ] = $fee_props;
+		$this->fees[ $fee_props->id ] = $fee_props;
+
+		return $this->fees[ $fee_props->id ];
 	}
 
 	/**
@@ -131,12 +131,20 @@ final class WC_Cart_Fees {
 	/**
 	 * Sort fees by amount.
 	 *
-	 * @param WC_Coupon $a Coupon object.
-	 * @param WC_Coupon $b Coupon object.
+	 * @param stdClass $a Fee object.
+	 * @param stdClass $b Fee object.
 	 * @return int
 	 */
 	protected function sort_fees_callback( $a, $b ) {
-		return ( $a->amount > $b->amount ) ? -1 : 1;
+		/**
+		 * Filter sort fees callback.
+		 *
+		 * @since 3.8.0
+		 * @param int Sort order, -1 or 1.
+		 * @param stdClass $a Fee object.
+		 * @param stdClass $b Fee object.
+		 */
+		return apply_filters( 'woocommerce_sort_fees_callback', $a->amount > $b->amount ? -1 : 1, $a, $b );
 	}
 
 	/**

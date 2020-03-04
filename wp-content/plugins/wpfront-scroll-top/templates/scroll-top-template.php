@@ -63,9 +63,11 @@ namespace WPFront\Scroll_Top;
 if ($this->options->button_style() == 'text') {
     ?>
     <div id="wpfront-scroll-top-container">
-        <div class="text-holder">
-            <?php echo $this->options->text_button_text(); ?>
-        </div>
+        <?php
+            $html = sprintf('<div class="text-holder">%s</div>', $this->options->text_button_text());
+            $html = $this->apply_button_action_html($html);
+            echo $html;
+        ?>
     </div>
 
     <style type="text/css">
@@ -85,7 +87,13 @@ if ($this->options->button_style() == 'text') {
     <?php
 } elseif($this->options->button_style() == 'font-awesome') {
     ?>
-    <div id="wpfront-scroll-top-container"><i class="<?php echo $this->options->fa_button_class(); ?>"></i></div>
+    <div id="wpfront-scroll-top-container">
+        <?php
+            $html = sprintf('<i class="%s"></i>', $this->options->fa_button_class());
+            $html = $this->apply_button_action_html($html);
+            echo $html;
+        ?>
+    </div>
     
     <style type="text/css">
         #wpfront-scroll-top-container i {
@@ -97,7 +105,13 @@ if ($this->options->button_style() == 'text') {
     <?php
 } else {
     ?>
-    <div id="wpfront-scroll-top-container"><img src="<?php echo $this->image(); ?>" alt="<?php echo $this->options->image_alt(); ?>" /></div>
+    <div id="wpfront-scroll-top-container">
+        <?php
+            $html = sprintf('<img src="%s" alt="%s" />', $this->image(), $this->options->image_alt());
+            $html = $this->apply_button_action_html($html);
+            echo $html;
+        ?>
+    </div>
     <?php
 }
 ?>

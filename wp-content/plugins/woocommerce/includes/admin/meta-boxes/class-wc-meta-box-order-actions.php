@@ -32,11 +32,13 @@ class WC_Meta_Box_Order_Actions {
 			$theorder = wc_get_order( $post->ID );
 		}
 
-		$order_actions = apply_filters( 'woocommerce_order_actions', array(
-			'send_order_details'              => __( 'Email invoice / order details to customer', 'woocommerce' ),
-			'send_order_details_admin'        => __( 'Resend new order notification', 'woocommerce' ),
-			'regenerate_download_permissions' => __( 'Regenerate download permissions', 'woocommerce' ),
-		) );
+		$order_actions = apply_filters(
+			'woocommerce_order_actions', array(
+				'send_order_details'              => __( 'Email invoice / order details to customer', 'woocommerce' ),
+				'send_order_details_admin'        => __( 'Resend new order notification', 'woocommerce' ),
+				'regenerate_download_permissions' => __( 'Regenerate download permissions', 'woocommerce' ),
+			)
+		);
 		?>
 		<ul class="order_actions submitbox">
 
@@ -60,9 +62,11 @@ class WC_Meta_Box_Order_Actions {
 						if ( ! EMPTY_TRASH_DAYS ) {
 							$delete_text = __( 'Delete permanently', 'woocommerce' );
 						} else {
-							$delete_text = __( 'Move to trash', 'woocommerce' );
+							$delete_text = __( 'Move to Trash', 'woocommerce' );
 						}
-						?><a class="submitdelete deletion" href="<?php echo esc_url( get_delete_post_link( $post->ID ) ); ?>"><?php echo esc_html( $delete_text ); ?></a><?php
+						?>
+						<a class="submitdelete deletion" href="<?php echo esc_url( get_delete_post_link( $post->ID ) ); ?>"><?php echo esc_html( $delete_text ); ?></a>
+						<?php
 					}
 					?>
 				</div>
