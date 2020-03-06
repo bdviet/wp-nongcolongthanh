@@ -20,13 +20,13 @@
 
 // ** MySQL settings ** //
 /** The name of the database for WordPress */
-define( 'DB_NAME', 'wp2481077' );
+define( 'DB_NAME', 'non57551_web' );
 
 /** MySQL database username */
-define( 'DB_USER', 'wpuser52183' );
+define( 'DB_USER', 'non57551_web' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', 'maeWbPXFOHFFwFC' );
+define( 'DB_PASSWORD', 'Admin@123' );
 
 /** MySQL hostname */
 define( 'DB_HOST', 'localhost' );
