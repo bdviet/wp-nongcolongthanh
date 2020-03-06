@@ -1,7 +1,3 @@
-# ignore everything in the root except the "wp-content" directory.
-/*
-!wp-content/
-
 # ignore log files and databases
 *.log
 *.sql
